@@ -49,14 +49,4 @@ Movement: Forward, backward, turning left/right, hovering
 
 Simulation: Adds artificial drift to test PID corrections
 
-🔮 Future Enhancements
- Add sensor simulation (gyroscope, accelerometer)
 
- Integrate with embedded-hal for real hardware control
-
- Implement full flight planner and path following
-
- Add visualization of drone orientation
-
-📜 License
-This project is licensed under the MIT License.
