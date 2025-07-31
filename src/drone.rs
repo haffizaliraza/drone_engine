@@ -1,7 +1,10 @@
 use crate::motor::Motor;
 use crate::pid::PIDController;
+use crate::dynamics::Dynamics;
+
 
 pub struct Drone {
+    pub dynamics: Dynamics,
     pub motors: [Motor; 4],
     pid_pitch: PIDController,
     pid_roll: PIDController,
@@ -16,6 +19,7 @@ pub struct Drone {
 impl Drone {
     pub fn new() -> Self {
         Self {
+            dynamics: Dynamics::new(),
             motors: [Motor::new(), Motor::new(), Motor::new(), Motor::new()],
             pid_pitch: PIDController::new(1.0, 0.0, 0.2),
             pid_roll: PIDController::new(1.0, 0.0, 0.2),
@@ -26,6 +30,15 @@ impl Drone {
             yaw: 0.0,
             altitude: 0.0,
         }
+    }
+    pub fn update_physics(&mut self, dt: f32) {
+        let thrusts: [f32; 4] = self.motors.iter().map(|m| m.speed * 0.1).collect::<Vec<_>>().try_into().unwrap(); // convert % to force
+        self.dynamics.update(thrusts, dt);
+        println!(
+            "Pos: ({:.2}, {:.2}, {:.2}) | Orient: Pitch {:.2}, Roll {:.2}, Yaw {:.2}",
+            self.dynamics.x, self.dynamics.y, self.dynamics.z,
+            self.dynamics.pitch, self.dynamics.roll, self.dynamics.yaw
+        );
     }
 
     fn set_all_motors(&mut self, speed: f32) {

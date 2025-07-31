@@ -1,6 +1,7 @@
 mod motor;
 mod pid;
 mod drone;
+mod dynamics;
 
 use drone::Drone;
 use std::thread;
@@ -10,17 +11,32 @@ fn main() {
     let mut drone = Drone::new();
     drone.take_off();
 
+    let dt = 0.1; // 100 ms physics update timestep
+
+    // Hover stabilization loop
     for _ in 0..10 {
         drone.simulate_drift();
-        drone.stabilize(0.1);
-        thread::sleep(Duration::from_millis(500));
+        drone.stabilize(dt);
+
+        // NEW: update physics for each iteration
+        drone.update_physics(dt);
+
+        thread::sleep(Duration::from_millis((dt * 1000.0) as u64));
     }
 
+    // Move forward while updating physics
     drone.move_forward();
-    thread::sleep(Duration::from_secs(2));
+    for _ in 0..20 {
+        drone.update_physics(dt);
+        thread::sleep(Duration::from_millis((dt * 1000.0) as u64));
+    }
 
+    // Turn left with physics updates
     drone.turn_left();
-    thread::sleep(Duration::from_secs(2));
+    for _ in 0..20 {
+        drone.update_physics(dt);
+        thread::sleep(Duration::from_millis((dt * 1000.0) as u64));
+    }
 
     drone.land();
 }
