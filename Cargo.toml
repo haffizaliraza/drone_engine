@@ -1,0 +1,9 @@
+[package]
+name = "drone_engine"
+version = "0.1.0"
+edition = "2025"
+authors = ["Hafiz Ali Raza haffizaliraza@gmail.com"]
+description = "A basic Rust drone engine with PID control"
+license = "MIT"
+
+[dependencies]
